@@ -1,21 +1,18 @@
 FROM python:3.9-slim
 
+# Set working directory
 WORKDIR /app
 
-# Update packages and install system build tools
-RUN apt-get update && \
-    apt-get install -y gcc g++ build-essential
+# Install system dependencies
+RUN apt-get update && apt-get install -y gcc g++ build-essential
 
-# Copy requirements and install Python packages
+# Copy and install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# (Optional: skip this if your requirements already include the model)
-# RUN python -m spacy download en_core_web_sm
-
-# Copy all app files
+# Copy app source code
 COPY . .
 
-# Run FastAPI with Uvicorn
+# Run app using uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
